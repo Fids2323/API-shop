@@ -26,4 +26,29 @@ router.post("/:productId", async (req, res) => {
 	}
 });
 
+// Get all reviews for a specific product
+router.get("/:productId", async (req, res) => {
+	const {productId} = req.params;
+	try {
+		const product = await Product.findById(productId).populate("reviews");
+		if (!product) {
+			return res.status(404).json({
+				success: false,
+				message: "Product not found",
+			});
+		}
+		res.status(200).json({
+			success: true,
+			message: "Reviews retrieved successfully",
+			data: product.reviews,
+		});
+	} catch (error) {
+		console.error(error);
+		res.status(500).json({
+			success: false,
+			message: "На сервере произошла ошибка. Попробуйте позже.",
+		});
+	}
+});
+
 module.exports = router;
